@@ -33,6 +33,7 @@
     "productName": "ElectronReact",
     "appId": "org.erb.ElectronReact",
     "files": [
+      "assets/",
       "dist/",
       "node_modules/",
       "index.html",

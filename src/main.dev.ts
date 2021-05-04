@@ -15,6 +15,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import runAhk from './ahk';
 
 export default class AppUpdater {
   constructor() {
@@ -91,6 +92,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+    runAhk();
   });
 
   mainWindow.on('closed', () => {
