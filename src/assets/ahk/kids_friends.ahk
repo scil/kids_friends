@@ -1,8 +1,11 @@
 #SingleInstance Ignore
 
-GroupAdd, ExplorerWindows, ahk_class Progman ;Desktop
-GroupAdd, ExplorerWindows, ahk_class CabinetWClass ;Explorer Window
-GroupAdd, ExplorerWindows, ahk_class ExploreWClass ;Other Explorer Window
+
+ TargetScriptTitle := "Hello ahk_exe electron.exe"
+
+GroupAdd, ExplorerWindows, ahk_class Progman ;Desktop 
+GroupAdd, ExplorerWindows, ahk_class CabinetWClass ;Explorer Window 
+GroupAdd, ExplorerWindows, ahk_class ExploreWClass ;Other Explorer Window 
 
 ; 为了识别双击 相关知识：
 ; How to assign action for Double Click? https://www.autohotkey.com/boards/viewtopic.php?t=64149
@@ -68,13 +71,44 @@ $LButton::
 
 
 
-F_Node_Write(event, string) {
+F_Node_Write(event, StringToSend) {
         ; 兼容node-ahk@1.0.7, scil版本已经加上了这句
         FileEncoding, UTF-8-RAW 
-
-        ; Dynamically Calling a Function。这样不在node-ahk的环境下 也不会出错。经过测试，目前ahk不能用 if IsFunc("Node_Write"))  来判断函数存在性并运行函数
+        ; Dynamically Calling a Function。这样不在node-ahk的环境下 也不会出错。经过测试，目前ahk不能用 if IsFunc("Node_Write"))  来判断函数存在性并运行函数   
         fn:= "Node_Write"
-        %fn%(event, string)  
+        %fn%(event, StringToSend)  
         
+        global TargetScriptTitle
+        result := Send_WM_COPYDATA(StringToSend, TargetScriptTitle)
+        if (result = "FAIL")
+            MsgBox SendMessage failed. Does the following WinTitle exist?:`n%TargetScriptTitle%
+        else if (result = 0)
+            MsgBox Message sent but the target window responded with 0, which may mean it ignored it.
+        return
+
 }
 
+
+
+
+; from https://www.autohotkey.com/docs/commands/OnMessage.htm#SendString
+Send_WM_COPYDATA(ByRef StringToSend, ByRef TargetScriptTitle)  ; ByRef saves a little memory in this case. 
+; This function sends the specified string to the specified window and returns the reply. 
+; The reply is 1 if the target window processed the message, or 0 if it ignored it. 
+{
+    VarSetCapacity(CopyDataStruct, 3*A_PtrSize, 0)  
+    ; First set the structure's cbData member to the size of the string, including its zero terminator: 
+    SizeInBytes := (StrLen(StringToSend) + 1) * (A_IsUnicode ? 2 : 1) 
+    NumPut(SizeInBytes, CopyDataStruct, A_PtrSize)  
+    NumPut(&StringToSend, CopyDataStruct, 2*A_PtrSize)  
+    Prev_DetectHiddenWindows := A_DetectHiddenWindows
+    Prev_TitleMatchMode := A_TitleMatchMode
+    DetectHiddenWindows On
+    SetTitleMatchMode 2
+    TimeOutTime := 4000  
+    ; Must use SendMessage not PostMessage. 
+    SendMessage, 0x4a, 0, &CopyDataStruct,, %TargetScriptTitle%,,,, %TimeOutTime% 
+    DetectHiddenWindows %Prev_DetectHiddenWindows% 
+    SetTitleMatchMode %Prev_TitleMatchMode% 
+    return ErrorLevel  
+}
