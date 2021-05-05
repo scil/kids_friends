@@ -11,11 +11,12 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import os from 'os';
+import session, { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import runAhk from './ahk';
+import { T, ahkdll, runAhkMonitor } from './ahk';
 
 export default class AppUpdater {
   constructor() {
@@ -57,7 +58,9 @@ const createWindow = async () => {
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
   ) {
-    await installExtensions();
+    // as GFW, extensions can not be installed https://github.com/SimulatedGREG/electron-vue/issues/37
+    // many way to set proxy failed, i have to disable this tool and mannully install extensions
+    //    await installExtensions();
   }
 
   const RESOURCES_PATH = app.isPackaged
@@ -78,6 +81,20 @@ const createWindow = async () => {
     },
   });
 
+  /**
+  mannully install extensions
+    offical doc uses  `session.defaultSession`  but it is undefined
+    https://github.com/electron/electron/blob/master/docs/tutorial/devtools-extension.md
+
+    try `webContents` and extension dir is recognized. but new error `Unrecognized manifest key` . maybe i should wait for next version of electron
+    https://github.com/electron/electron/issues/23662
+    */
+  const reactDevToolsPath = path.join(
+    os.homedir(),
+    '/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.13.0_0'
+  );
+  await mainWindow.webContents.session.loadExtension(reactDevToolsPath);
+
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   // @TODO: Use 'ready-to-show' event
@@ -92,7 +109,27 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-    runAhk();
+
+    // scil
+    runAhkMonitor();
+  });
+
+  // scil
+  mainWindow.hookWindowMessage(0x4a /* = WM_COPYDATA */, (wParam, lParam) => {
+    console.log('wParam = ', wParam);
+    console.log('lParam = ', lParam);
+    const script = `
+StringAddress := NumGet(${lParam} + 2*A_PtrSize) 
+CopyOfData := StrGet(StringAddress)
+ahkassign clicked_file %CopyOfData%
+msgbox % CopyOfData
+msgbox % clicked_file
+`;
+
+    console.log(script);
+
+    ahkdll.ahkTextDll(T(script), T(''), T(''));
+    return 1;
   });
 
   mainWindow.on('closed', () => {
