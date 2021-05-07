@@ -70,21 +70,23 @@ $LButton::
         Return
 
 
-
+; 没有象ahk示范代码那样 用变量result 因为
+; 不象ahk的OnMessage， electron 里的hookWindowMessage回调函数，运行后没有返回值
+; https://github.com/electron/electron/blob/11199d8824612e3d434ea2a8af2a9a608a522903/shell/browser/api/electron_api_base_window.cc#L307
+; 以下来自ahk示范代码
+;         if (result = "FAIL")
+;             MsgBox SendMessage failed. Does the following WinTitle exist?:`n%TargetScriptTitle%
+;         else if (result = 0)
+;             MsgBox Message sent but the target window responded with 0, which may mean it ignored it.
 F_Node_Write(event, StringToSend) {
-        ; 兼容node-ahk@1.0.7, scil版本已经加上了这句
-        FileEncoding, UTF-8-RAW 
+        ;for node-ahk
         ; Dynamically Calling a Function。这样不在node-ahk的环境下 也不会出错。经过测试，目前ahk不能用 if IsFunc("Node_Write"))  来判断函数存在性并运行函数   
         fn:= "Node_Write"
         %fn%(event, StringToSend)  
         
         global TargetScriptTitle
         result := Send_WM_COPYDATA(StringToSend, TargetScriptTitle)
-        if (result = "FAIL")
-            MsgBox SendMessage failed. Does the following WinTitle exist?:`n%TargetScriptTitle%
-        else if (result = 0)
-            MsgBox Message sent but the target window responded with 0, which may mean it ignored it.
-        return
+         return
 
 }
 

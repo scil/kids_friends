@@ -18,6 +18,8 @@ export function runAhkMonitor() {
     path.join(__dirname, 'assets/ahk', 'kids_friends.ahk'),
     'utf8'
   );
+  //  .replaceAll(/^\s*;[\s\w]*$/gm, '') // 凡是 ; 开头的行 都删除其内容
+  //  .replaceAll(/;[^'"]+$/gm, '')  // 谨慎地删除注释 注意有些字符串里也有符号";" 所以可能会造成误伤 只能排除'和"来减少误伤
 
   const ok = ahkdll.ahkTextDll(T(ahkScriptString), T(''), T(''));
   // console.log(ok);
