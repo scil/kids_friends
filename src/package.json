@@ -15,6 +15,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "ffi-napi": "^4.0.3"
+    "ffi-napi": "^4.0.3",
+    "ref-array-di": "^1.2.2"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^2.3.5"
   }
 }

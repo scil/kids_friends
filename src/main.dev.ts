@@ -12,11 +12,32 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
 import os from 'os';
-import session, { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { T, ahkdll, runAhkMonitor } from './ahk';
+
+const FILENAME_MAX_LEN = 512;
+
+const ref = require('ref-napi');
+const Struct = require('ref-struct-di')(ref);
+const ArrayType = require('ref-array-di')(ref);
+
+const ULONG = ref.types.ulong;
+const POINTER = ref.refType(ref.types.void);
+const UINT = ref.types.uint;
+const ULONG_P = ref.refType(ULONG);
+// const CHAR_P = ref.refType(ref.types.char);
+const CharArray = ArrayType('char *', FILENAME_MAX_LEN);
+const CHARARRAY_P = ref.refType(CharArray);
+
+const COPYDATA = new Struct({
+  dwData: ULONG_P,
+  cbData: ULONG,
+  lpData: CHARARRAY_P,
+});
+const COPYDATA_P = ref.refType(COPYDATA);
 
 export default class AppUpdater {
   constructor() {
@@ -91,7 +112,7 @@ const createWindow = async () => {
     */
   const reactDevToolsPath = path.join(
     os.homedir(),
-    '/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.13.0_0'
+    '/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.13.1_0'
   );
   await mainWindow.webContents.session.loadExtension(reactDevToolsPath);
 
@@ -115,22 +136,36 @@ const createWindow = async () => {
   });
 
   // scil
-  mainWindow.hookWindowMessage(0x4a /* = WM_COPYDATA */, (wParam, lParam) => {
-    console.log('wParam = ', wParam);
-    console.log('lParam = ', lParam);
-    const script = `
-StringAddress := NumGet(${lParam} + 2*A_PtrSize) 
-CopyOfData := StrGet(StringAddress)
-ahkassign clicked_file %CopyOfData%
-msgbox % CopyOfData
-msgbox % clicked_file
-`;
+  // aync is necessary, otherwize electron will die.  another way to avoid dying is to add sth like `console.log('lParam = ', lParam);`
+  mainWindow.hookWindowMessage(
+    0x4a /* = WM_COPYDATA */,
+    async (wParam: Buffer, lParam: Buffer) => {
+      //  console.log('lParam = ', lParam);
+      const buf = lParam;
 
-    console.log(script);
+      buf.type = COPYDATA_P;
+      // console.log('\nCOPYDATA_P ', buf.deref())
+      // console.log('\nCOPYDATA ', buf.deref().deref())
 
-    ahkdll.ahkTextDll(T(script), T(''), T(''));
-    return 1;
-  });
+      const size = buf.deref().deref().cbData;
+      console.log('\nsize ', size);
+
+      const lpBuf = buf.deref().deref().lpData;
+      // console.log('lpData ', lpBuf)
+
+      // 发现，在终端上，中文名字会乱码，用EmEditor实验发现，把utf8的数据用gb2312编码呈现，就是一样的乱码。js里转换为gb2312需要第三方库
+      const filePath = lpBuf.toString('utf16le');
+      console.log('lpBuf utf16le', filePath);
+      // 目前发现用不用 size 都一样
+      // console.log('\nlpBuf utf16le size', lpBuf.toString('utf16le',0, size))
+      console.log(
+        '\nlpBuf utf16le size-1',
+        lpBuf.toString('utf16le', 0, size - 1)
+      );
+
+      return 0;
+    }
+  );
 
   mainWindow.on('closed', () => {
     mainWindow = null;
