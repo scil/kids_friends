@@ -16,6 +16,7 @@ DblClickTime := DllCall("GetDoubleClickTime", "UInt")
 
 ; 用剪切板方式获取鼠标点击的文件的名字 缺点是 
 ;       双击Explorer.exe 的非文件列表区域 只要有文件处于选中状态 就会返回这个文件的名字 
+;       拖动失灵
 GetFilePath() {
         ClipSave:=ClipboardAll
         Clipboard:=""
@@ -55,10 +56,10 @@ $LButton::
 
         SplitPath, v_FilePath,,,v_Ext
 
-        If (v_Ext="mp4") {
+        If (v_Ext="mp4" or v_Ext="mkv" or v_Ext="rmvb") {
 
-                 MsgBox % "You Double clicked on a mp4 file " . v_FilePath
-                 F_Node_Write("file clicked", v_FilePath)  
+                 ;MsgBox % "You Double clicked on a mp4 file " . v_FilePath
+                 FUNC_FILE_TO_RUN("file clicked", v_FilePath)  
         }
         Else
         {
@@ -78,13 +79,15 @@ $LButton::
 ;             MsgBox SendMessage failed. Does the following WinTitle exist?:`n%TargetScriptTitle%
 ;         else if (result = 0)
 ;             MsgBox Message sent but the target window responded with 0, which may mean it ignored it.
-F_Node_Write(event, StringToSend) {
+FUNC_FILE_TO_RUN(event, StringToSend) {
         ;for node-ahk
         ; Dynamically Calling a Function。这样不在node-ahk的环境下 也不会出错。经过测试，目前ahk不能用 if IsFunc("Node_Write"))  来判断函数存在性并运行函数   
-        fn:= "Node_Write"
-        %fn%(event, StringToSend)  
+        ;fn:= "Node_Write"
+        ;%fn%(event, StringToSend)  
         
         global TargetScriptTitle
+        WinMaximize, % TargetScriptTitle
+        WinActivate, % TargetScriptTitle
         result := Send_WM_COPYDATA(StringToSend, TargetScriptTitle)
          return
 
