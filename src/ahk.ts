@@ -11,8 +11,6 @@ export function T(text, encoding = 'utf16le') {
 
 export const ahkdll = new ffi.Library(libPath, {
   ahkTextDll: ['int32', ['string', 'string', 'string']],
-  ahkassign: ['int', ['string', 'string']],
-  ahkgetvar: ['string', ['string', 'uint']],
 });
 
 export function runAhkMonitor() {
