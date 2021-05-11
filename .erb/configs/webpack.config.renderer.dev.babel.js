@@ -274,7 +274,7 @@ export default merge(baseConfig, {
     before() {
       console.log('Starting Main Process...');
       //scil
-      // if (process.env.RUN_ELECTRON_MANUALLY) {console.log('plz run electron manully');return}
+      // if (process.env.RUN_ELECTRON_MAIN_MANUALLY) {console.log('plz run electron manully');return}
       spawn('npm', ['run', 'start:main'], {
         shell: true,
         env: process.env,
