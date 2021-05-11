@@ -9,6 +9,7 @@
     "jsx": "react",
     "strict": true,
     "pretty": true,
+    "inlineSources": true, //scil 将 ts 源码生成到 source map 中,https://blog.jetbrains.com/webstorm/2016/05/getting-started-with-electron-in-webstorm/
     "sourceMap": true,
     /* Additional Checks */
     "noUnusedLocals": true,
