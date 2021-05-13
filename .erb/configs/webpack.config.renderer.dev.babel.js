@@ -70,7 +70,8 @@ export default merge(baseConfig, {
         ]
       },
       {
-        test: /\.global\.css$/,
+        // test: /\.global\.css$/,
+        test: /(?:survey-react.+)|(?:\.global)\.css$/,
         use: [
           {
             loader: 'style-loader'
@@ -84,7 +85,8 @@ export default merge(baseConfig, {
         ]
       },
       {
-        test: /^((?!\.global).)*\.css$/,
+        // test: /^((?!\.global).)*\.css$/,
+        test: /^((?!(?:\.global|survey-react)).)*\.css$/,
         use: [
           {
             loader: 'style-loader'
@@ -274,7 +276,7 @@ export default merge(baseConfig, {
     before() {
       console.log('Starting Main Process...');
       //scil
-      // if (process.env.RUN_ELECTRON_MAIN_MANUALLY) {console.log('plz run electron manully');return}
+      // if (process.env.RUN_ELECTRON_MAIN_MANUALLY==='true') {console.log('plz run electron manully: yarn run start:main');return}
       spawn('npm', ['run', 'start:main'], {
         shell: true,
         env: process.env,

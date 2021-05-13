@@ -1,0 +1,17 @@
+.sv_main {
+  font-size: 25px;
+}
+
+/* title 左排版时，尽量让所有内容都左对齐，好像在一列上一样*/
+.sv_qstn .title-left {
+  min-width: 6em;
+}
+/* 增加各问题间的上下间距 */
+.sv_main .sv_container .sv_body .sv_p_root .sv_q {
+  padding-top: 1.5em;
+  padding-bottom: 2.5em;
+}
+
+.sv_q_required_text {
+  display: none;
+}
