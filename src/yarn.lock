@@ -839,6 +839,11 @@ lzma-native@^6.0.1:
     readable-stream "^2.3.5"
     rimraf "^2.7.1"
 
+math-expression-evaluator@^1.3.7:
+  version "1.3.7"
+  resolved "https://registry.npm.taobao.org/math-expression-evaluator/download/math-expression-evaluator-1.3.7.tgz?cache=0&sync_timestamp=1608424641237&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmath-expression-evaluator%2Fdownload%2Fmath-expression-evaluator-1.3.7.tgz#1b62225db86af06f7ea1fd9576a34af605a5b253"
+  integrity sha1-G2IiXbhq8G9+of2VdqNK9gWlslM=
+
 mime-db@1.47.0:
   version "1.47.0"
   resolved "https://registry.npmjs.org/mime-db/-/mime-db-1.47.0.tgz"
@@ -1437,6 +1442,11 @@ supports-color@^7.1.0:
   integrity sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==
   dependencies:
     has-flag "^4.0.0"
+
+survey-react@^1.8.47:
+  version "1.8.47"
+  resolved "https://registry.nlark.com/survey-react/download/survey-react-1.8.47.tgz#acc0c43cc44a45e1cc3438e75157e71679e652f8"
+  integrity sha1-rMDEPMRKReHMNDjnUVfnFnnmUvg=
 
 tar@^4:
   version "4.4.13"

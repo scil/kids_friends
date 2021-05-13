@@ -110,7 +110,7 @@ const createWindow = async () => {
     */
   const reactDevToolsPath = path.join(
     os.homedir(),
-    '/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.13.1_0'
+    '/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.13.2_0'
   );
   await mainWindow.webContents.session.loadExtension(reactDevToolsPath);
 
