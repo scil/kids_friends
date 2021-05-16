@@ -5,7 +5,7 @@ import mathExpressionEvaluator from 'math-expression-evaluator/dist/browser/math
 import 'survey-react/survey.css'; // default theme
 // import 'survey-react/modern.min.css'; // modern theme
 import './Survey.global.css';
-import surveyJSON from './Survey.data';
+import genSurveyJSON from './Survey.data';
 
 Survey.StylesManager.applyTheme('default');
 
@@ -15,6 +15,7 @@ function MyMathExpressionEvaluator(params) {
   const correctAnswer = mathExpressionEvaluator.eval(expr);
   return correctAnswer;
 }
+
 Survey.FunctionFactory.Instance.register(
   'MyMathExpressionEvaluator',
   MyMathExpressionEvaluator
@@ -40,12 +41,40 @@ function sendDataToServer(survey) {
   // alert(`The results are:${JSON.stringify(survey.data)}`);
 }
 
-export default function S() {
-  return (
-    <Survey.Survey
-      json={surveyJSON}
-      onValidateQuestion={surveyValidateQuestion}
-      onComplete={sendDataToServer}
-    />
-  );
+// 函数式组件里，更新状态 surveyJSON 不灵
+// export function __MySurvey() {
+//   const [surveyJSON, setSurveyJSON] = useState(genSurveyJSON(3));
+// }
+
+export default class MySurvey extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      surveyJSON: genSurveyJSON(3),
+    };
+  }
+
+  render() {
+    // 用 model 才行，用json更新状态 surveyJSON 不灵
+    const { surveyJSON } = this.state;
+    const model = new Survey.Model(surveyJSON);
+    return (
+      <Survey.Survey
+        model={model}
+        onValidateQuestion={surveyValidateQuestion}
+        onComplete={(sender: Survey.ReactSurveyModel, options) => {
+          // Restart survey once it is completed. #816
+          // https://github.com/surveyjs/survey-library/issues/816
+          // sender.clear();
+          // sender.render();
+
+          this.setState((state, props) => {
+            return {
+              surveyJSON: genSurveyJSON(3),
+            };
+          });
+        }}
+      />
+    );
+  }
 }

@@ -8,8 +8,8 @@
 }
 /* 增加各问题间的上下间距 */
 .sv_main .sv_container .sv_body .sv_p_root .sv_q {
-  padding-top: 1.5em;
-  padding-bottom: 2.5em;
+  padding-top: 1.1em;
+  padding-bottom: 2.1em;
 }
 
 .sv_q_required_text {

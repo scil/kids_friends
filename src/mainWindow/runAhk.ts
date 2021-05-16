@@ -13,9 +13,9 @@ export const ahkdll = new ffi.Library(libPath, {
   ahkTextDll: ['int32', ['string', 'string', 'string']],
 });
 
-export function runAhkMonitor() {
+export async function runAhkMonitor() {
   const ahkScriptString = fs.readFileSync(
-    path.join(__dirname, 'assets/ahk', 'kids_friends.ahk'),
+    path.join(__dirname, '../assets/ahk', 'kids_friends.ahk'),
     'utf8'
   );
   //  .replaceAll(/^\s*;[\s\w]*$/gm, '') // 凡是 ; 开头的行 都删除其内容
