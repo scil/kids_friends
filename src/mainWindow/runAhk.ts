@@ -10,7 +10,10 @@ export function T(text, encoding = 'utf16le') {
 }
 
 export const ahkdll = new ffi.Library(libPath, {
+  // start a new thread，If a thread is already executed it will terminated before new thread starts.
   ahkTextDll: ['int32', ['string', 'string', 'string']],
+  // 不会终止已运行的 thread
+  ahkExec: ['int32', ['string']],
 });
 
 export async function runAhkMonitor() {
@@ -56,6 +59,7 @@ export async function hideElectronAndRunFile(filePath: string) {
   const ahkRunFileLines = genRunFileScriptLines(filePath);
   const ahkScriptString = `
   ${ahkScriptHeader}
+  WinSet, AlwaysOnTop, Off, % TargetScriptTitle
   WinHide, % TargetScriptTitle
   ${ahkRunFileLines}
   `;
@@ -67,5 +71,6 @@ export async function hideElectronAndRunFile(filePath: string) {
   //   console.log('The file was succesfully saved with UTF-8!');
   // });
 
-  ahkdll.ahkTextDll(T(ahkScriptString), T(''), T(''));
+  // 不可用 ahkTextDll，那么会导致 AhkMonitor的线程会杀死
+  ahkdll.ahkExec(T(ahkScriptString));
 }

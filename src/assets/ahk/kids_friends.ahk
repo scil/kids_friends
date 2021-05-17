@@ -86,9 +86,10 @@ FUNC_FILE_TO_RUN(event, StringToSend) {
         ;%fn%(event, StringToSend)
 
         global TargetScriptTitle
+        WinShow, % TargetScriptTitle
         WinMaximize, % TargetScriptTitle
         WinActivate, % TargetScriptTitle
-        WinShow, % TargetScriptTitle
+        WinSet, AlwaysOnTop, On, % TargetScriptTitle
         result := Send_WM_COPYDATA(StringToSend, TargetScriptTitle)
          return
 
