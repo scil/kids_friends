@@ -26,6 +26,7 @@ const surveyJSON = {
     },
   ],
   showTitle: false,
+  focusFirstQuestionAutomatic: true,
 };
 
 const mathsPool = ['5 + 4', '4 + 5', '9 - 5', '9 - 4'];

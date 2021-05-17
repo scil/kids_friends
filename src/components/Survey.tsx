@@ -5,7 +5,10 @@ import mathExpressionEvaluator from 'math-expression-evaluator/dist/browser/math
 import 'survey-react/survey.css'; // default theme
 // import 'survey-react/modern.min.css'; // modern theme
 import './Survey.global.css';
+import electron from 'electron';
 import genSurveyJSON from './Survey.data';
+
+const { ipcRenderer } = electron;
 
 Survey.StylesManager.applyTheme('default');
 
@@ -47,11 +50,26 @@ function sendDataToServer(survey) {
 // }
 
 export default class MySurvey extends React.Component {
+  survey = null;
+
   constructor(props) {
     super(props);
     this.state = {
       surveyJSON: genSurveyJSON(3),
     };
+
+    const onClickedFile = (event, message: string) => {
+      console.log('clicked_file', message);
+    };
+    this.on_clicked_file = onClickedFile.bind(this);
+  }
+
+  componentDidMount() {
+    ipcRenderer.on('clicked_file', this.on_clicked_file);
+  }
+
+  componentWillUnmount() {
+    ipcRenderer.off('clicked_file', this.on_clicked_file);
   }
 
   render() {
@@ -62,11 +80,14 @@ export default class MySurvey extends React.Component {
       <Survey.Survey
         model={model}
         onValidateQuestion={surveyValidateQuestion}
-        onComplete={(sender: Survey.ReactSurveyModel, options) => {
+        onComplete={(sv: Survey.ReactSurveyModel, options) => {
           // Restart survey once it is completed. #816
           // https://github.com/surveyjs/survey-library/issues/816
-          // sender.clear();
-          // sender.render();
+          // sv.clear();
+          // sv.render();
+
+          const reply = ipcRenderer.sendSync('sync_survey_complete', 'ok');
+          console.log(reply);
 
           this.setState((state, props) => {
             return {

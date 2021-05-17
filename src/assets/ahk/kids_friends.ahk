@@ -3,19 +3,19 @@
 
  TargetScriptTitle := "Hello ahk_exe electron.exe"
 
-GroupAdd, ExplorerWindows, ahk_class Progman ;Desktop 
-GroupAdd, ExplorerWindows, ahk_class CabinetWClass ;Explorer Window 
-GroupAdd, ExplorerWindows, ahk_class ExploreWClass ;Other Explorer Window 
+GroupAdd, ExplorerWindows, ahk_class Progman ;Desktop
+GroupAdd, ExplorerWindows, ahk_class CabinetWClass ;Explorer Window
+GroupAdd, ExplorerWindows, ahk_class ExploreWClass ;Other Explorer Window
 
 ; 为了识别双击 相关知识：
 ; How to assign action for Double Click? https://www.autohotkey.com/boards/viewtopic.php?t=64149
-; 这个帖子未细看：Easiest way to detect double clicks? https://autohotkey.com/board/topic/56493-easiest-way-to-detect-double-clicks/ 
+; 这个帖子未细看：Easiest way to detect double clicks? https://autohotkey.com/board/topic/56493-easiest-way-to-detect-double-clicks/
 DblClickTime := DllCall("GetDoubleClickTime", "UInt")
 ;MsgBox, DblClickTime = %DblClickTime% ms
 
 
-; 用剪切板方式获取鼠标点击的文件的名字 缺点是 
-;       双击Explorer.exe 的非文件列表区域 只要有文件处于选中状态 就会返回这个文件的名字 
+; 用剪切板方式获取鼠标点击的文件的名字 缺点是
+;       双击Explorer.exe 的非文件列表区域 只要有文件处于选中状态 就会返回这个文件的名字
 ;       拖动失灵
 GetFilePath() {
         ClipSave:=ClipboardAll
@@ -36,8 +36,8 @@ Return ;end of Auto Execute
 
 #IfWinActive, ahk_group ExplorerWindows
 
-; why $? 
-; 其实：The $ prefix has no effect for mouse hotkeys, since they always use the mouse hook. 
+; why $?
+; 其实：The $ prefix has no effect for mouse hotkeys, since they always use the mouse hook.
 ; https://www.autohotkey.com/docs/Hotkeys.htm#prefixdollar
 $LButton::
 
@@ -48,7 +48,7 @@ $LButton::
         ; Send {LButton Up}
         If ( A_PriorHotkey != A_ThisHotkey or  A_TimeSincePriorHotkey > DblClickTime  )
          {
-                 Send {Click} 
+                 Send {Click}
                  Return
          }
 
@@ -59,7 +59,7 @@ $LButton::
         If (v_Ext="mp4" or v_Ext="mkv" or v_Ext="rmvb") {
 
                  ;MsgBox % "You Double clicked on a mp4 file " . v_FilePath
-                 FUNC_FILE_TO_RUN("file clicked", v_FilePath)  
+                 FUNC_FILE_TO_RUN("file clicked", v_FilePath)
         }
         Else
         {
@@ -81,13 +81,14 @@ $LButton::
 ;             MsgBox Message sent but the target window responded with 0, which may mean it ignored it.
 FUNC_FILE_TO_RUN(event, StringToSend) {
         ;for node-ahk
-        ; Dynamically Calling a Function。这样不在node-ahk的环境下 也不会出错。经过测试，目前ahk不能用 if IsFunc("Node_Write"))  来判断函数存在性并运行函数   
+        ; Dynamically Calling a Function。这样不在node-ahk的环境下 也不会出错。经过测试，目前ahk不能用 if IsFunc("Node_Write"))  来判断函数存在性并运行函数
         ;fn:= "Node_Write"
-        ;%fn%(event, StringToSend)  
-        
+        ;%fn%(event, StringToSend)
+
         global TargetScriptTitle
         WinMaximize, % TargetScriptTitle
         WinActivate, % TargetScriptTitle
+        WinShow, % TargetScriptTitle
         result := Send_WM_COPYDATA(StringToSend, TargetScriptTitle)
          return
 
@@ -97,23 +98,19 @@ FUNC_FILE_TO_RUN(event, StringToSend) {
 
 
 ; from https://www.autohotkey.com/docs/commands/OnMessage.htm#SendString
-Send_WM_COPYDATA(ByRef StringToSend, ByRef TargetScriptTitle)  ; ByRef saves a little memory in this case. 
-; This function sends the specified string to the specified window and returns the reply. 
-; The reply is 1 if the target window processed the message, or 0 if it ignored it. 
+Send_WM_COPYDATA(ByRef StringToSend, ByRef TargetScriptTitle)
 {
-    VarSetCapacity(CopyDataStruct, 3*A_PtrSize, 0)  
-    ; First set the structure's cbData member to the size of the string, including its zero terminator: 
-    SizeInBytes := (StrLen(StringToSend) + 1) * (A_IsUnicode ? 2 : 1) 
-    NumPut(SizeInBytes, CopyDataStruct, A_PtrSize)  
-    NumPut(&StringToSend, CopyDataStruct, 2*A_PtrSize)  
+    VarSetCapacity(CopyDataStruct, 3*A_PtrSize, 0)
+    SizeInBytes := (StrLen(StringToSend) + 1) * (A_IsUnicode ? 2 : 1)
+    NumPut(SizeInBytes, CopyDataStruct, A_PtrSize)
+    NumPut(&StringToSend, CopyDataStruct, 2*A_PtrSize)
     Prev_DetectHiddenWindows := A_DetectHiddenWindows
     Prev_TitleMatchMode := A_TitleMatchMode
     DetectHiddenWindows On
     SetTitleMatchMode 2
-    TimeOutTime := 4000  
-    ; Must use SendMessage not PostMessage. 
-    SendMessage, 0x4a, 0, &CopyDataStruct,, %TargetScriptTitle%,,,, %TimeOutTime% 
-    DetectHiddenWindows %Prev_DetectHiddenWindows% 
-    SetTitleMatchMode %Prev_TitleMatchMode% 
-    return ErrorLevel  
+    TimeOutTime := 4000
+    SendMessage, 0x4a, 0, &CopyDataStruct,, %TargetScriptTitle%,,,, %TimeOutTime%
+    DetectHiddenWindows %Prev_DetectHiddenWindows%
+    SetTitleMatchMode %Prev_TitleMatchMode%
+    return ErrorLevel
 }

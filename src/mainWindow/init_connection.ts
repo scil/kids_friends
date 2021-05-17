@@ -1,8 +1,16 @@
+import * as fs from 'fs';
 import { COPYDATA_P } from './ref_COPYDATA';
-import { runAhkMonitor } from './runAhk';
-import { desiredFile } from './desiredFile';
+import { hideElectronAndRunFile, runAhkMonitor } from './runAhk';
+
+const electron = require('electron');
+
+const { ipcMain } = electron;
+const iconvLite = require('iconv-lite');
 
 let inited = false;
+const desiredFile = {
+  path: null,
+};
 
 function connectMessageBetweenMainAndAhk(mainWindow) {
   // scil
@@ -27,7 +35,7 @@ function connectMessageBetweenMainAndAhk(mainWindow) {
 
       // 发现，在终端上，中文名字会乱码，用EmEditor实验发现，把utf8的数据用gb2312编码呈现，就是一样的乱码。js里转换为gb2312需要第三方库
       const filePath = lpBuf.toString('utf16le', 0, size - 1);
-      console.log('lpBuf in utf8', filePath);
+      // console.log('lpBuf encoded utf8', filePath);
       // 如果不用size，在console上看显示一样，但在 webContents 上，会有太多无关字符（FILENAME_MAX_LEN)
       // console.log('\nlpBuf utf16le size', lpBuf.toString('utf16le'))
 
@@ -44,9 +52,21 @@ function connectMessageBetweenMainAndAhk(mainWindow) {
   );
 }
 
-export default async function initAhk(mainWindow) {
+// https://www.brainbell.com/javascript/ipc-communication.html
+function connectMessageBetweenMainAndRenderer(mainWindow) {
+  ipcMain.on('sync_survey_complete', (event, args) => {
+    console.log('msg from renderer', 'sync_survey_complete', args);
+    event.returnValue = 'Main said I know a survey completed';
+
+    mainWindow.minimize();
+    hideElectronAndRunFile(desiredFile.path);
+  });
+}
+
+export default async function initConnection(mainWindow) {
   if (inited) return;
   inited = true;
   await runAhkMonitor();
   connectMessageBetweenMainAndAhk(mainWindow);
+  connectMessageBetweenMainAndRenderer(mainWindow);
 }

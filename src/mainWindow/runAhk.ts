@@ -24,3 +24,48 @@ export async function runAhkMonitor() {
   const ok = ahkdll.ahkTextDll(T(ahkScriptString), T(''), T(''));
   // console.log(ok);
 }
+
+const ahkScriptHeader = `
+#SingleInstance Ignore
+DetectHiddenWindows, On
+TargetScriptTitle := "Hello ahk_exe electron.exe"
+`;
+
+/**
+ *
+ * @param filePath
+ * @param fileVarName
+ * 带中文的文件名需要特殊处理成这样的代码
+ *   File := chr(83)chr(58)chr(92)chr(39640)chr(46)chr(109)chr(112)chr(52)
+ *   Run, % File
+ */
+function genRunFileScriptLines(filePath: string, fileVarName = 'File') {
+  let lines = '';
+  if (filePath && fs.existsSync(filePath)) {
+    lines = `${fileVarName} :=`;
+    for (let i = 0; i < filePath.length; i += 1) {
+      lines += `chr(${filePath.charCodeAt(i)})`; // 中英文混合的文本，所有字符都要用编码
+    }
+    lines = `${lines}
+    Run, % ${fileVarName}`;
+  }
+  return lines;
+}
+
+export async function hideElectronAndRunFile(filePath: string) {
+  const ahkRunFileLines = genRunFileScriptLines(filePath);
+  const ahkScriptString = `
+  ${ahkScriptHeader}
+  WinHide, % TargetScriptTitle
+  ${ahkRunFileLines}
+  `;
+  console.log(ahkScriptString);
+
+  // let filepathUTF8 = './hideElectronAndRunFile.ahk';
+  // fs.writeFile(filepathUTF8, ahkScriptString, (err) => {
+  //   if (err) throw err;
+  //   console.log('The file was succesfully saved with UTF-8!');
+  // });
+
+  ahkdll.ahkTextDll(T(ahkScriptString), T(''), T(''));
+}

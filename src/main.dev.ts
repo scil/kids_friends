@@ -16,7 +16,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import initAhk from './mainWindow/init_ahk';
+import initConnection from './mainWindow/init_connection';
 
 export default class AppUpdater {
   constructor() {
@@ -104,7 +104,7 @@ const createWindow = async () => {
       throw new Error('"mainWindow" is not defined');
     }
     // scil
-    await initAhk(mainWindow);
+    await initConnection(mainWindow);
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
