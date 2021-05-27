@@ -3,7 +3,9 @@ const path = require('path');
 const ffi = require('ffi-napi');
 
 const dllType = process.arch === 'x64' ? 'x64w' : 'W32w';
-const libPath = `D:/A/ahk/AutoHotkey_H/ahkdll-v1-release-master/${dllType}_MT/AutoHotkey.dll`;
+const libPath =
+  // `D:/A/ahk/AutoHotkey_H/ahkdll-v1-release-master/${dllType}_MT/AutoHotkey.dll`;
+  path.join(__dirname, '../assets/ahk', `${dllType}_AutoHotkey.dll`);
 
 export function T(text, encoding = 'utf16le') {
   return Buffer.from(text, encoding).toString('binary');
