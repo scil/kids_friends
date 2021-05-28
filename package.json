@@ -30,8 +30,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Kids",
+    "appId": "org.erb.Kids",
     "files": [
       "assets/",
       "dist/",

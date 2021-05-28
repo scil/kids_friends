@@ -15,6 +15,7 @@ import os from 'os';
 import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import fs from 'fs';
 import MenuBuilder from './menu';
 import initConnection from './mainWindow/init_connection';
 
@@ -93,7 +94,12 @@ const createWindow = async () => {
     os.homedir(),
     '/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.13.2_0'
   );
-  await mainWindow.webContents.session.loadExtension(reactDevToolsPath);
+
+  if (!fs.existsSync(reactDevToolsPath)) {
+    console.warn(`dir not exists for reactDevToolsPath ${reactDevToolsPath}`);
+  } else {
+    await mainWindow.webContents.session.loadExtension(reactDevToolsPath);
+  }
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 

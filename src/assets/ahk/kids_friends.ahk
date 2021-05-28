@@ -80,11 +80,6 @@ $LButton::
 ;         else if (result = 0)
 ;             MsgBox Message sent but the target window responded with 0, which may mean it ignored it.
 FUNC_FILE_TO_RUN(event, StringToSend) {
-        ;for node-ahk
-        ; Dynamically Calling a Function。这样不在node-ahk的环境下 也不会出错。经过测试，目前ahk不能用 if IsFunc("Node_Write"))  来判断函数存在性并运行函数
-        ;fn:= "Node_Write"
-        ;%fn%(event, StringToSend)
-
         global TargetScriptTitle
         WinShow, % TargetScriptTitle
         WinMaximize, % TargetScriptTitle
@@ -99,6 +94,7 @@ FUNC_FILE_TO_RUN(event, StringToSend) {
 
 
 ; from https://www.autohotkey.com/docs/commands/OnMessage.htm#SendString
+
 Send_WM_COPYDATA(ByRef StringToSend, ByRef TargetScriptTitle)
 {
     VarSetCapacity(CopyDataStruct, 3*A_PtrSize, 0)
