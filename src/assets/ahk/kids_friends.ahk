@@ -93,7 +93,7 @@ FUNC_FILE_TO_RUN(event, StringToSend) {
 
 
 
-; from https://www.autohotkey.com/docs/commands/OnMessage.htm#SendString
+;from https://www.autohotkey.com/docs/commands/OnMessage.htm#SendString
 
 Send_WM_COPYDATA(ByRef StringToSend, ByRef TargetScriptTitle)
 {

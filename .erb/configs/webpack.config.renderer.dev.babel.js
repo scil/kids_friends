@@ -277,7 +277,10 @@ export default merge(baseConfig, {
       console.log('Starting Main Process...');
       //scil
       // if (process.env.RUN_ELECTRON_MAIN_MANUALLY==='true') {console.log('plz run electron manully: yarn run start:main');return}
-      spawn('npm', ['run', 'start:main'], {
+
+      const mainCommand = process.env.BUILD_TEST === 'true' ? '_build_test:start:main' : 'start:main';
+
+      spawn('npm', ['run', mainCommand], {
         shell: true,
         env: process.env,
         stdio: 'inherit'
