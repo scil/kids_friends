@@ -83,13 +83,13 @@ const createWindow = async () => {
   });
 
   /**
-  mannully install extensions
-    offical doc uses  `session.defaultSession`  but it is undefined
-    https://github.com/electron/electron/blob/master/docs/tutorial/devtools-extension.md
+   mannully install extensions
+   offical doc uses  `session.defaultSession`  but it is undefined
+   https://github.com/electron/electron/blob/master/docs/tutorial/devtools-extension.md
 
-    try `webContents` and extension dir is recognized. but new error `Unrecognized manifest key` . maybe i should wait for next version of electron
-    https://github.com/electron/electron/issues/23662
-    */
+   try `webContents` and extension dir is recognized. but new error `Unrecognized manifest key` . maybe i should wait for next version of electron
+   https://github.com/electron/electron/issues/23662
+   */
   const reactDevToolsPath = path.join(
     os.homedir(),
     '/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.13.2_0'
@@ -101,7 +101,18 @@ const createWindow = async () => {
     await mainWindow.webContents.session.loadExtension(reactDevToolsPath);
   }
 
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  console.group('loadURL'); // 'src'
+  console.log('dirname is', __dirname); // 'src'
+  let indexFile: string | string;
+  if (process.env.BUILD_TEST === 'true') {
+    const basepath = app.getAppPath();
+    console.log('basepath is', basepath); // D:\vagrant\www\kids_friends_electron\src
+    indexFile = `file://${basepath}/index.html`;
+  } else {
+    indexFile = `file://${__dirname}/index.html`;
+  }
+  console.groupEnd('loadURL');
+  mainWindow.loadURL(indexFile);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
