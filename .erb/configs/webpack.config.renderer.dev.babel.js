@@ -278,7 +278,7 @@ export default merge(baseConfig, {
       //scil
       // if (process.env.RUN_ELECTRON_MAIN_MANUALLY==='true') {console.log('plz run electron manully: yarn run start:main');return}
 
-      const mainCommand = process.env.BUILD_TEST === 'true' ? '_build_test:start:main' : 'start:main';
+      const mainCommand = process.env.BUILD_TEST === 'true' ? 'build_[Test_Webpack]:[START]:_main' : 'start:main';
 
       spawn('npm', ['run', mainCommand], {
         shell: true,

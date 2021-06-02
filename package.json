@@ -6,22 +6,18 @@
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
     "build:main": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.main.prod.babel.js",
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.renderer.prod.babel.js",
-
-    "build_test": "concurrently \"yarn _build_test:main\" \"yarn build:renderer\"",
-    "_build_test:main": "cross-env DEBUG_PROD=true NODE_ENV=production webpack --config .erb/configs/webpack.config.main.build-test.babel.js",
-    "build_test:start": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && yarn _build_test:start:renderer",
-    "_build_test:start:renderer": "cross-env NODE_ENV=development RUN_ELECTRON_MAIN_MANUALLY=false BUILD_TEST=true START_MINIMIZED=true  webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
-    "_build_test:start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.prod.js --remote-debugging-port=9222",
-
+    "build_[Test_Webpack]": "concurrently \"yarn build_[Test_Webpack]:_main\" \"yarn build:renderer\"",
+    "build_[Test_Webpack]:_main": "cross-env DEBUG_PROD=true NODE_ENV=production webpack --config .erb/configs/webpack.config.main.[Test_Webpack].babel.js",
+    "build_[Test_Webpack]:[START]": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && yarn build_[Test_Webpack]:[START]:_renderer",
+    "build_[Test_Webpack]:[START]:_renderer": "cross-env NODE_ENV=development RUN_ELECTRON_MAIN_MANUALLY=false BUILD_TEST=true START_MINIMIZED=true  webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
+    "build_[Test_Webpack]:[START]:_main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.prod-[Test_Webpack].js --remote-debugging-port=9222",
     "rebuild": "electron-rebuild  -d=http://npm.taobao.org/mirrors/atom-shell --sequential --types prod,dev,optional --module-dir src",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
     "package": "rm -rf src/dist && yarn build && electron-builder build --publish never",
     "postinstall": "node -r @babel/register .erb/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall && yarn-deduplicate yarn.lock",
-
     "start": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.ts --remote-debugging-port=9222",
-    "start:renderer": "cross-env NODE_ENV=development RUN_ELECTRON_MAIN_MANUALLY=false START_MINIMIZED=true  webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
-
+    "start:renderer": "cross-env NODE_ENV=development AFTER_PACKAGE=true RUN_ELECTRON_MAIN_MANUALLY=false START_MINIMIZED=true  webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
     "test": "jest"
   },
   "lint-staged": {
