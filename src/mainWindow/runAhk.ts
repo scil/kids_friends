@@ -65,7 +65,8 @@ export async function hideElectronAndRunFile(filePath: string) {
   WinHide, % TargetScriptTitle
   ${ahkRunFileLines}
   `;
-  console.log(ahkScriptString);
+  // console.log(ahkScriptString);
+  console.log('[AHK] hideElectronAndRunFile');
 
   // let filepathUTF8 = './hideElectronAndRunFile.ahk';
   // fs.writeFile(filepathUTF8, ahkScriptString, (err) => {
@@ -73,6 +74,6 @@ export async function hideElectronAndRunFile(filePath: string) {
   //   console.log('The file was succesfully saved with UTF-8!');
   // });
 
-  // 不可用 ahkTextDll，那么会导致 AhkMonitor的线程会杀死
+  // 不可用 ahkTextDll，那么会建立新线程，同时 AhkMonitor的线程会杀死
   ahkdll.ahkExec(T(ahkScriptString));
 }
