@@ -1,7 +1,11 @@
 #SingleInstance Ignore
 
-
- TargetScriptTitle := "Hello ahk_exe electron.exe"
+; 尝试过不用 ahk_exe， 因为
+;     测试时是 ahk_exe electron.exe
+;     打包后是  ahk_exe Kids.exe
+; 但尝试失败：用 ahk_class，或只用 title，但都不工作
+; TargetScriptTitle := "Hello ahk_class Chrome_WidgetWin_1 "
+TargetScriptTitle := "Hello ahk_exe electron.exe"
 
 GroupAdd, ExplorerWindows, ahk_class Progman ;Desktop
 GroupAdd, ExplorerWindows, ahk_class CabinetWClass ;Explorer Window
