@@ -30,6 +30,9 @@ node_modules
 # OSX
 .DS_Store
 
+# TEST_WEBPACK
+src/main.prod-\[TEST_WEBPACK\].js
+
 # App packaged
 release
 src/main.prod.js
