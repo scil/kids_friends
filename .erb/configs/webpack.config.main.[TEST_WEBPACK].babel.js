@@ -30,7 +30,7 @@ export default merge(baseConfig, {
 
   output: {
     path: path.join(__dirname, '../../'),
-    filename: './src/main.prod-[Test_Webpack].js',
+    filename: './src/main.prod-[TEST_WEBPACK].js',
   },
 
   optimization: {
@@ -73,6 +73,6 @@ export default merge(baseConfig, {
   node: {
     __dirname: true,
     __filename: false,
-    include:/ref-napi|runAhk/, // runAhk的内容因为被收集到了src/main.prod-[Test_Webpack].js，需要在其中设置 __dirname='src\\mainWindow'
+    include:/ref-napi|runAhk/, // runAhk的内容因为被收集到了src/main.prod-[TEST_WEBPACK].js，需要在其中设置 __dirname='src\\mainWindow'
   },
 });
