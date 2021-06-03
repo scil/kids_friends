@@ -71,7 +71,7 @@ export default merge(baseConfig, {
       },
       {
         // test: /\.global\.css$/,
-        test: /(?:survey-react.+)|(?:\.global)\.css$/,
+        test: /((?:survey-react.+)|(?:\.global))\.css$/,
         use: [
           {
             loader: 'style-loader'
