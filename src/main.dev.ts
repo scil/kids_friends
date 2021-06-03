@@ -101,17 +101,14 @@ const createWindow = async () => {
     await mainWindow.webContents.session.loadExtension(reactDevToolsPath);
   }
 
-  console.group('loadURL'); // 'src'
-  console.log('dirname is', __dirname); // 'src'
-  let indexFile: string | string;
-  if (process.env.BUILD_TEST === 'true') {
-    const basepath = app.getAppPath();
-    console.log('basepath is', basepath); // D:\vagrant\www\kids_friends_electron\src
-    indexFile = `file://${basepath}/index.html`;
-  } else {
-    indexFile = `file://${__dirname}/index.html`;
-  }
-  console.groupEnd('loadURL');
+  /*
+   * 如果此文件被 NodeStuffPlugin ` __dirname: true,` 影响
+   * __dirname 这个变量会被改写成 src, ${__dirname}/index.html 就成了 src/index.html
+   * 这就需要 indexFile 做出调整
+
+   *
+   */
+  const indexFile = `file://${__dirname}/index.html`;
   mainWindow.loadURL(indexFile);
 
   // @TODO: Use 'ready-to-show' event
