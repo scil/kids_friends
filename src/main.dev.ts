@@ -103,8 +103,9 @@ const createWindow = async () => {
 
   /*
    * 如果此文件被 NodeStuffPlugin ` __dirname: true,` 影响
-   * __dirname 这个变量会被改写成 src, ${__dirname}/index.html 就成了 src/index.html
-   * 这就需要 indexFile 做出调整
+   *    __dirname 这个变量会被改写成 src, ${__dirname}/index.html 就成了 src/index.html
+   *    这就需要 indexFile 做出调整
+   * 不过给 NodeStuffPlugin 添加了 include 功能，此文件不被影响。
 
    *
    */
@@ -125,6 +126,13 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+    // debug
+    // if (
+    //   process.env.NODE_ENV === 'development' ||
+    //   process.env.DEBUG_PROD === 'true'
+    // ) {
+    //   mainWindow.webContents.openDevTools();
+    // }
   });
 
   mainWindow.on('closed', () => {

@@ -69,7 +69,6 @@ export default merge(baseConfig, {
    * https://github.com/webpack/webpack/issues/2010
    */
   node: {
-    // __dirname: true,
     __dirname: true,
     __filename: false,
     include:/ref-napi/,
