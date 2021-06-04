@@ -1,11 +1,23 @@
-const fs = require('fs');
-const path = require('path');
+import { app } from 'electron';
+import path from 'path';
+import fs from 'fs';
+
 const ffi = require('ffi-napi');
 
 const dllType = process.arch === 'x64' ? 'x64w' : 'W32w';
-const libPath =
-  // `D:/A/ahk/AutoHotkey_H/ahkdll-v1-release-master/${dllType}_MT/AutoHotkey.dll`;
-  path.join(__dirname, '../assets/ahk', `${dllType}_AutoHotkey.dll`);
+
+const getAppAssetPath = (...paths: string[]): string => {
+  return path.join(
+    __dirname,
+    '..',
+    app.isPackaged ? 'app.asar.unpacked' : '',
+    'app_assets',
+    ...paths
+  );
+};
+
+const libPath = getAppAssetPath('ahk', `${dllType}_AutoHotkey.dll`);
+console.log('dll ', libPath);
 
 export function T(text, encoding = 'utf16le') {
   return Buffer.from(text, encoding).toString('binary');
@@ -19,15 +31,14 @@ export const ahkdll = new ffi.Library(libPath, {
 });
 
 export async function runAhkMonitor() {
-  const ahkScriptString = fs.readFileSync(
-    path.join(__dirname, '../assets/ahk', 'kids_friends.ahk'),
-    'utf8'
-  );
-  //  .replaceAll(/^\s*;[\s\w]*$/gm, '') // 凡是 ; 开头的行 都删除其内容
-  //  .replaceAll(/;[^'"]+$/gm, '')  // 谨慎地删除注释 注意有些字符串里也有符号";" 所以可能会造成误伤 只能排除'和"来减少误伤
+  const ahkFile = getAppAssetPath('ahk', 'kids_friends.ahk');
+  // console.log(ahkFile);
+
+  const ahkScriptString = fs.readFileSync(ahkFile, 'utf8');
+  // console.log(ahkScriptString)
 
   const ok = ahkdll.ahkTextDll(T(ahkScriptString), T(''), T(''));
-  // console.log(ok);
+  console.log('runAhkMonitor', ok);
 }
 
 const ahkScriptHeader = `
