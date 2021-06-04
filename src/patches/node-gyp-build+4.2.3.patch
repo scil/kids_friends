@@ -1,0 +1,21 @@
+diff --git a/node_modules/node-gyp-build/index.js b/node_modules/node-gyp-build/index.js
+index b5096ed..07724c1 100644
+--- a/node_modules/node-gyp-build/index.js
++++ b/node_modules/node-gyp-build/index.js
+@@ -21,8 +21,16 @@ function load (dir) {
+   return runtimeRequire(load.path(dir))
+ }
+ 
++var electron = require('electron')
++var app = electron.app;
++const isPackaged = app.isPackaged;
++
+ load.path = function (dir) {
+   dir = path.resolve(dir || '.')
++  if (isPackaged) {
++    dir = dir.replace('src','resources\\app.asar.unpacked')
++  }
++  console.log('gyp ',dir)
+ 
+   try {
+     var name = runtimeRequire(path.join(dir, 'package.json')).name.toUpperCase().replace(/-/g, '_')
