@@ -6,6 +6,9 @@ const ffi = require('ffi-napi');
 
 const dllType = process.arch === 'x64' ? 'x64w' : 'W32w';
 
+const appExe = app.isPackaged ? 'Kids.exe' : 'electron.exe';
+console.log('appExe', appExe);
+
 const getAppAssetPath = (...paths: string[]): string => {
   return path.join(
     __dirname,
@@ -34,7 +37,10 @@ export async function runAhkMonitor() {
   const ahkFile = getAppAssetPath('ahk', 'kids_friends.ahk');
   // console.log(ahkFile);
 
-  const ahkScriptString = fs.readFileSync(ahkFile, 'utf8');
+  let ahkScriptString = fs.readFileSync(ahkFile, 'utf8');
+  if (app.isPackaged) {
+    ahkScriptString = ahkScriptString.replace('electron.exe', appExe);
+  }
   // console.log(ahkScriptString)
 
   const ok = ahkdll.ahkTextDll(T(ahkScriptString), T(''), T(''));
@@ -44,7 +50,7 @@ export async function runAhkMonitor() {
 const ahkScriptHeader = `
 #SingleInstance Ignore
 DetectHiddenWindows, On
-TargetScriptTitle := "Hello ahk_exe electron.exe"
+TargetScriptTitle := "Hello ahk_exe ${appExe}"
 `;
 
 /**
