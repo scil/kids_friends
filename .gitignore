@@ -30,6 +30,9 @@ node_modules
 # OSX
 .DS_Store
 
+# big files
+src/app_assets/ahk/*.dll
+
 # TEST_WEBPACK
 src/main.prod-\[TEST_WEBPACK\].js
 

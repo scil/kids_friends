@@ -29,7 +29,7 @@ const surveyJSON = {
   focusFirstQuestionAutomatic: true,
 };
 
-const mathsPool = ['5 + 4', '4 + 5', '9 - 5', '9 - 4'];
+const mathsPool = ['5 + 2', '2 + 5', '7 - 5', '7 - 2'];
 const elementsCacheByMath = (() => {
   const elementsCache = {};
   mathsPool.forEach((math) => {

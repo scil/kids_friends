@@ -8,8 +8,8 @@
 
 1. 只安装在 `src\package.json`
 2. 为了 ffi-napi 的正常运行，需要针对其使用的 \_\_dirname 进行特别设置，其中包括 patch，见 `src\patches\`
-3. 为了避免 native 模块反复编译，在 `.yarnrc` 中定义了 `--ignore-scripts true`
-   [How do I skip building the DLL immediately after install?](https://electron-react-boilerplate.js.org/docs/faq/#how-do-i-skip-building-the-dll-immediately-after-install)
+3. 为了避免 native 模块反复编译，在 `.yarnrc` 中定义了 `--ignore-scripts true` [How do I skip building the DLL immediately after install?](https://electron-react-boilerplate.js.org/docs/faq/#how-do-i-skip-building-the-dll-immediately-after-install)
+4. 如果需要重新编译 native 模块，请修改 `.yarnrc`
 
 ## autohotkey
 

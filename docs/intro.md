@@ -17,6 +17,11 @@
   - https://www.electron.build/
   - https://www.electronjs.org/docs
 
+霸道机制：试题出现后 禁止其它操作
+
+- 窗口显示后全屏 `fullscreen: true`
+- 启动后最小化 `START_MINIMIZED: 'true'`
+
 问题
 
 - 目前文件打开，只靠监视双击动作

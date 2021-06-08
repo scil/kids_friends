@@ -76,6 +76,7 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
+    fullscreen: true, // 这样就没有了关闭按捺 只能把题目做出来才行运行视频文件
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,

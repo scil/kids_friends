@@ -30,7 +30,7 @@ load.path = function (dir) {
   if (isPackaged) {
     dir = dir.replace('src','resources\\app.asar.unpacked')
   }
-  console.log('gyp ',dir)
+  console.log('gyp call ',dir)
 
   try {
     var name = runtimeRequire(path.join(dir, 'package.json')).name.toUpperCase().replace(/-/g, '_')

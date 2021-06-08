@@ -2,12 +2,14 @@ import { app } from 'electron';
 import path from 'path';
 import fs from 'fs';
 
+import code from './ahkCodeMonitor';
+
 const ffi = require('ffi-napi');
 
 const dllType = process.arch === 'x64' ? 'x64w' : 'W32w';
 
 const appExe = app.isPackaged ? 'Kids.exe' : 'electron.exe';
-console.log('appExe', appExe);
+console.log('[runAHK] appExe is ', appExe);
 
 const getAppAssetPath = (...paths: string[]): string => {
   return path.join(
@@ -20,7 +22,7 @@ const getAppAssetPath = (...paths: string[]): string => {
 };
 
 const libPath = getAppAssetPath('ahk', `${dllType}_AutoHotkey.dll`);
-console.log('dll ', libPath);
+console.log('[runAHK] ahk dll is ', libPath);
 
 export function T(text, encoding = 'utf16le') {
   return Buffer.from(text, encoding).toString('binary');
@@ -34,17 +36,23 @@ export const ahkdll = new ffi.Library(libPath, {
 });
 
 export async function runAhkMonitor() {
-  const ahkFile = getAppAssetPath('ahk', 'kids_friends.ahk');
-  // console.log(ahkFile);
+  let ahkScriptString;
+  if (process.env.LOAD_AHK_FILE_FOR_MONITOR === 'true') {
+    const ahkFile = getAppAssetPath('ahk', 'kids_friends.ahk');
+    console.log('[runAHK] load monitor ahk code from utf8 file ', ahkFile);
+    ahkScriptString = fs.readFileSync(ahkFile, 'utf8');
+  } else {
+    console.log('[runAHK] load monitor ahk code from js file ');
+    ahkScriptString = code;
+  }
 
-  let ahkScriptString = fs.readFileSync(ahkFile, 'utf8');
   if (app.isPackaged) {
     ahkScriptString = ahkScriptString.replace('electron.exe', appExe);
   }
   // console.log(ahkScriptString)
 
   const ok = ahkdll.ahkTextDll(T(ahkScriptString), T(''), T(''));
-  console.log('runAhkMonitor', ok);
+  console.log('[runAHK] runAhkMonitor', ok);
 }
 
 const ahkScriptHeader = `

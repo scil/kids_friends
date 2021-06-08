@@ -73,8 +73,8 @@ export default class MySurvey extends React.Component {
   }
 
   render() {
-    // 用 model 才行，用json更新状态 surveyJSON 不灵
     const { surveyJSON } = this.state;
+    // 用 model 才行，用json更新状态 surveyJSON 不灵
     const model = new Survey.Model(surveyJSON);
     return (
       <Survey.Survey
@@ -86,8 +86,8 @@ export default class MySurvey extends React.Component {
           // sv.clear();
           // sv.render();
 
-          const reply = ipcRenderer.sendSync('sync_survey_complete', 'ok');
-          console.log(reply);
+          const reply = ipcRenderer.sendSync('SYNC_SURVEY_COMPLETE', 'ok');
+          console.log('[MAIN MSG]', reply);
 
           this.setState((state, props) => {
             return {

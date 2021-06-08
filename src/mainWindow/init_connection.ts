@@ -24,11 +24,11 @@ function connectMessageBetweenMainAndAhk(mainWindow) {
       const buf = lParam;
 
       buf.type = COPYDATA_P;
-      console.log('\nCOPYDATA_P ', buf.deref());
+      console.log('[WIN MSG]COPYDATA_P ', buf.deref());
       // console.log('\nCOPYDATA ', buf.deref().deref())
 
       const size = buf.deref().deref().cbData;
-      console.log('\nsize ', size);
+      console.log('[WIN MSG]size ', size);
 
       const lpBuf = buf.deref().deref().lpData;
       // console.log('lpData ', lpBuf)
@@ -54,11 +54,10 @@ function connectMessageBetweenMainAndAhk(mainWindow) {
 
 // https://www.brainbell.com/javascript/ipc-communication.html
 function connectMessageBetweenMainAndRenderer(mainWindow) {
-  ipcMain.on('sync_survey_complete', (event, args) => {
-    console.log('msg from renderer', 'sync_survey_complete', args);
+  ipcMain.on('SYNC_SURVEY_COMPLETE', (event, args) => {
+    console.log('[RENDERER MSG] ', 'SYNC_SURVEY_COMPLETE', args);
     event.returnValue = 'Main said I know a survey completed';
 
-    mainWindow.minimize();
     hideElectronAndRunFile(desiredFile.path);
   });
 }
