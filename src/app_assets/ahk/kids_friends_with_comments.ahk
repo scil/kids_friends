@@ -7,6 +7,10 @@
 ; TargetScriptTitle := "Hello ahk_class Chrome_WidgetWin_1 "
 TargetScriptTitle := "Hello ahk_exe electron.exe"
 
+; 等待窗口出现
+WinWait, % TargetScriptTitle,, 3
+WinHide, % TargetScriptTitle
+
 GroupAdd, ExplorerWindows, ahk_class Progman ;Desktop
 GroupAdd, ExplorerWindows, ahk_class CabinetWClass ;Explorer Window
 GroupAdd, ExplorerWindows, ahk_class ExploreWClass ;Other Explorer Window
