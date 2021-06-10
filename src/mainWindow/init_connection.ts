@@ -24,18 +24,18 @@ function connectMessageBetweenMainAndAhk(mainWindow) {
       const buf = lParam;
 
       buf.type = COPYDATA_P;
-      console.log('[WIN MSG]COPYDATA_P ', buf.deref());
+      // console.log('[WIN MSG]COPYDATA_P ', buf.deref());
       // console.log('\nCOPYDATA ', buf.deref().deref())
 
       const size = buf.deref().deref().cbData;
-      console.log('[WIN MSG]size ', size);
+      console.log('[WIN MSG] size ', size);
 
       const lpBuf = buf.deref().deref().lpData;
       // console.log('lpData ', lpBuf)
 
       // 发现，在终端上，中文名字会乱码，用EmEditor实验发现，把utf8的数据用gb2312编码呈现，就是一样的乱码。js里转换为gb2312需要第三方库
       const filePath = lpBuf.toString('utf16le', 0, size - 1);
-      // console.log('lpBuf encoded utf8', filePath);
+      console.log('[WIN MSG] lpBuf encoded utf16le', filePath);
       // 如果不用size，在console上看显示一样，但在 webContents 上，会有太多无关字符（FILENAME_MAX_LEN)
       // console.log('\nlpBuf utf16le size', lpBuf.toString('utf16le'))
 

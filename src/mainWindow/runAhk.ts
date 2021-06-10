@@ -7,6 +7,8 @@ import code from './ahkCodeMonitor';
 const ffi = require('ffi-napi');
 
 const dllType = process.arch === 'x64' ? 'x64w' : 'W32w';
+const ahkVersion = 'v2';
+const ahkVersion2 = ahkVersion === 'v2';
 
 const appExe = app.isPackaged ? 'Kids.exe' : 'electron.exe';
 console.log('[runAHK] appExe is ', appExe);
@@ -21,7 +23,10 @@ const getAppAssetPath = (...paths: string[]): string => {
   );
 };
 
-const libPath = getAppAssetPath('ahk', `${dllType}_AutoHotkey.dll`);
+const libPath = getAppAssetPath(
+  'ahk',
+  `${dllType}_MT_AutoHotkey_${ahkVersion}.dll`
+);
 console.log('[runAHK] ahk dll is ', libPath);
 
 export function T(text, encoding = 'utf16le') {
@@ -33,16 +38,21 @@ export const ahkdll = new ffi.Library(libPath, {
   ahkTextDll: ['int32', ['string', 'string', 'string']],
   // 不会终止已运行的 thread
   ahkExec: ['int32', ['string']],
+  // v2 用 ahkExec 造成程序崩溃，用 addScript 不会，不知 v1能否也用这个
+  addScript: ['int32', ['string', 'int32']],
 });
 
 export async function runAhkMonitor() {
   let ahkScriptString;
   if (process.env.LOAD_AHK_FILE_FOR_MONITOR === 'true') {
-    const ahkFile = getAppAssetPath('ahk', 'kids_friends.ahk');
-    console.log('[runAHK] load monitor ahk code from utf8 file ', ahkFile);
+    const ahkFile = getAppAssetPath('ahk', `${ahkVersion}_monitor.ahk`);
+    console.log(
+      '[runAHK Monitor] load monitor ahk code from utf8 file ',
+      ahkFile
+    );
     ahkScriptString = fs.readFileSync(ahkFile, 'utf8');
   } else {
-    console.log('[runAHK] load monitor ahk code from js file ');
+    console.log('[runAHK Monitor] load monitor ahk code from js string ');
     ahkScriptString = code;
   }
 
@@ -52,12 +62,12 @@ export async function runAhkMonitor() {
   // console.log(ahkScriptString)
 
   const ok = ahkdll.ahkTextDll(T(ahkScriptString), T(''), T(''));
-  console.log('[runAHK] runAhkMonitor', ok);
+  console.log('[runAHK monitor] result', ok);
 }
 
 const ahkScriptHeader = `
 #SingleInstance Ignore
-DetectHiddenWindows, On
+${ahkVersion2 ? 'DetectHiddenWindows 1' : 'DetectHiddenWindows, On'}
 TargetScriptTitle := "Hello ahk_exe ${appExe}"
 `;
 
@@ -65,33 +75,45 @@ TargetScriptTitle := "Hello ahk_exe ${appExe}"
  *
  * @param filePath
  * @param fileVarName
- * 带中文的文件名需要特殊处理成这样的代码
+ * 带中文的文件名需要特殊处理成这样的代码(ahk v1版本的代码)
  *   File := chr(83)chr(58)chr(92)chr(39640)chr(46)chr(109)chr(112)chr(52)
- *   Run, % File
+ *   Run,% File
  */
 function genRunFileScriptLines(filePath: string, fileVarName = 'File') {
-  let lines = '';
-  if (filePath && fs.existsSync(filePath)) {
-    lines = `${fileVarName} :=`;
-    for (let i = 0; i < filePath.length; i += 1) {
-      lines += `chr(${filePath.charCodeAt(i)})`; // 中英文混合的文本，所有字符都要用编码
-    }
-    lines = `${lines}
-    Run, % ${fileVarName}`;
+  if (!(filePath && fs.existsSync(filePath))) {
+    return '';
   }
-  return lines;
+
+  if (ahkVersion2) {
+    let chars = '';
+    // eslint-disable-next-line no-param-reassign
+    for (let i = 0; i < filePath.length; i += 1) {
+      chars += `chr(${filePath.charCodeAt(i)}) . `; // 中英文混合的文本，所有字符都要用编码
+    }
+    return `${fileVarName} := 'open "' .  ${chars} '"'
+    Run(${fileVarName})`;
+  }
+
+  let chars = '';
+  for (let i = 0; i < filePath.length; i += 1) {
+    chars += `chr(${filePath.charCodeAt(i)})`; // 中英文混合的文本，所有字符都要用编码
+  }
+  return `${fileVarName} := ${chars}
+  Run, % ${fileVarName}
+  `;
 }
 
-export async function hideElectronAndRunFile(filePath: string) {
+export function hideElectronAndRunFile(filePath: string) {
+  console.log(`[AHK RunFile] ${filePath}`);
   const ahkRunFileLines = genRunFileScriptLines(filePath);
   const ahkScriptString = `
   ${ahkScriptHeader}
-  WinSet, AlwaysOnTop, Off, % TargetScriptTitle
-  WinHide, % TargetScriptTitle
+  WinSetAlwaysOnTop  0, TargetScriptTitle
+  WinHide TargetScriptTitle
   ${ahkRunFileLines}
   `;
-  // console.log(ahkScriptString);
-  console.log('[AHK] hideElectronAndRunFile');
+  console.log('[AHK RunFile]', ahkScriptString);
+  console.log('[AHK RunFile] hideElectronAndRunFile');
 
   // let filepathUTF8 = './hideElectronAndRunFile.ahk';
   // fs.writeFile(filepathUTF8, ahkScriptString, (err) => {
@@ -100,5 +122,10 @@ export async function hideElectronAndRunFile(filePath: string) {
   // });
 
   // 不可用 ahkTextDll，那么会建立新线程，同时 AhkMonitor的线程会杀死
-  ahkdll.ahkExec(T(ahkScriptString));
+  if (ahkVersion2) {
+    // v2 用 ahkExec 造成程序崩溃，用 addScript 不会，不知 v1能否也用这个
+    ahkdll.addScript(T(ahkScriptString), 2);
+  } else {
+    ahkdll.ahkExec(T(ahkScriptString));
+  }
 }

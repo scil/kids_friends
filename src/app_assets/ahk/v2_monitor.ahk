@@ -1,4 +1,4 @@
-const ahkCode = `#SingleInstance Force
+#SingleInstance Force
 DetectHiddenWindows 1
 
 global TargetScriptTitle := "Hello ahk_exe electron.exe"
@@ -7,7 +7,7 @@ if WinWait(TargetScriptTitle, , 3)
 {
        WinHide
 }
-
+ 
 
 GroupAdd "ExplorerWindows", "ahk_class Progman" ;Desktop
 GroupAdd "ExplorerWindows", "ahk_class CabinetWClass" ;Explorer Window
@@ -45,15 +45,15 @@ MyFuncLButton(ThisHotkey){
 }
 
 GetFilePath() {
-        ClipSaved := ClipboardAll()
+        ClipSaved := ClipboardAll() 
         A_Clipboard := ""
 
         Send "^c"
         ClipWait
         Path:= A_Clipboard
 
-        A_Clipboard := ClipSaved
-        ClipSaved := ""
+        A_Clipboard := ClipSaved   
+        ClipSaved := "" 
         return   Path
 }
 
@@ -80,22 +80,21 @@ MyFunc_To_Run_File(event, StringToSend) {
 
 
 
-Send_WM_COPYDATA(ByRef StringToSend, ByRef TargetScriptTitle)
+Send_WM_COPYDATA(ByRef StringToSend, ByRef TargetScriptTitle)  
 {
-    CopyDataStruct := BufferAlloc(3*A_PtrSize)
+    CopyDataStruct := BufferAlloc(3*A_PtrSize)  
     SizeInBytes := (StrLen(StringToSend) + 1) * 2
-    NumPut( "Ptr", SizeInBytes
-          , "Ptr", StrPtr(StringToSend)
+    NumPut( "Ptr", SizeInBytes  
+          , "Ptr", StrPtr(StringToSend)  
           , CopyDataStruct, A_PtrSize)
     Prev_DetectHiddenWindows := A_DetectHiddenWindows
     Prev_TitleMatchMode := A_TitleMatchMode
     DetectHiddenWindows True
     SetTitleMatchMode 2
-    TimeOutTime := 4000
-
-    RetValue := SendMessage(0x4a, 0, CopyDataStruct,, TargetScriptTitle,,,, TimeOutTime)
-    DetectHiddenWindows Prev_DetectHiddenWindows
-    SetTitleMatchMode Prev_TitleMatchMode
-    return RetValue
-}`;
-export default ahkCode;
+    TimeOutTime := 4000  
+    
+    RetValue := SendMessage(0x4a, 0, CopyDataStruct,, TargetScriptTitle,,,, TimeOutTime) 
+    DetectHiddenWindows Prev_DetectHiddenWindows  
+    SetTitleMatchMode Prev_TitleMatchMode         
+    return RetValue  
+}

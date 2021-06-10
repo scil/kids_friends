@@ -13,8 +13,8 @@
 - surveyjs
 - react。因为 surveyjs 的原因，未使用函数组件。
 - electron
-  - https://electron-react-boilerplate.js.org
-  - https://www.electron.build/
+  - https://electron-react-boilerplate.js.org 基于以下
+  - https://www.electron.build/ 基于以下
   - https://www.electronjs.org/docs
 
 霸道机制：试题出现后 禁止其它操作
@@ -26,3 +26,5 @@
 
 - 目前文件打开，只靠监视双击动作
 - autohotkey.dll 调用 monitor 代码时(`runAhkMonitor`) 有时会解析错误 有时则没有任何反应，应该是 dll 的问题。
+- 开发时
+  - 如果在终端输出中文，譬如中文的文件名，会导致终端输出乱码，且后续输出不再显示
