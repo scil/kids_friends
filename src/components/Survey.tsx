@@ -87,7 +87,7 @@ export default class MySurvey extends React.Component {
           // sv.render();
 
           const reply = ipcRenderer.sendSync('SYNC_SURVEY_COMPLETE', 'ok');
-          console.log('[MAIN MSG]', reply);
+          console.log('[MAIN MSG COPIED]', reply);
 
           this.setState((state, props) => {
             return {

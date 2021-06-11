@@ -1,11 +1,9 @@
-import * as fs from 'fs';
 import { COPYDATA_P } from './ref_COPYDATA';
 import { hideElectronAndRunFile, runAhkMonitor } from './runAhk';
 
 const electron = require('electron');
 
 const { ipcMain } = electron;
-const iconvLite = require('iconv-lite');
 
 let inited = false;
 const desiredFile = {
@@ -55,7 +53,7 @@ function connectMessageBetweenMainAndAhk(mainWindow) {
 // https://www.brainbell.com/javascript/ipc-communication.html
 function connectMessageBetweenMainAndRenderer(mainWindow) {
   ipcMain.on('SYNC_SURVEY_COMPLETE', (event, args) => {
-    console.log('[RENDERER MSG] ', 'SYNC_SURVEY_COMPLETE', args);
+    console.log('[RENDERER MSG COPIED] ', 'SYNC_SURVEY_COMPLETE', args);
     event.returnValue = 'Main said I know a survey completed';
 
     hideElectronAndRunFile(desiredFile.path);
