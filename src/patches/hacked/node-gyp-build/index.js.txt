@@ -32,6 +32,7 @@ load.path = function (dir) {
     // for: D:\vagrant\www\kids_friends_electron\release\win-unpacked\src\node_modules\ref-napi
     dir = dir.replace('src','resources\\app.asar.unpacked')
     // for dir like: D:\vagrant\www\kids_friends_electron\release\win-unpacked\resources\app.asar\node_modules\ref-napi
+    // 这个似乎并不需要 不替换居然也能正常运行
     dir = dir.replace('resources\\app.asar\\','resources\\app.asar.unpacked\\')
   }
   console.log('gyp call new ',dir)
