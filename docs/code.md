@@ -12,8 +12,8 @@ Evernote 中的 electron 笔记。
 
 1. 只安装在 `src\package.json`
 2. 为了 ffi-napi 的正常运行，需要针对其使用的 \_\_dirname 进行特别设置，其中包括
-3. 针对 node-gypd-build 的 patch，见 `src\patches\`
-4. 针对 webpack 插件 NodeStuffPlugin 的加强 D:\vagrant\vendors\webpack\，使 \_\_dirname: true 可以只在部分地方生效
+3. 针对 webpack 插件 NodeStuffPlugin 的加强 D:\vagrant\vendors\webpack\，使 \_\_dirname: true 可以只在部分地方生效
+4. 针对 node-gypd-build 的 patch，见 `src\patches\`
 5. 为了避免 native 模块反复编译，在 `.yarnrc` 中定义了 `--ignore-scripts true` [How do I skip building the DLL immediately after install?](https://electron-react-boilerplate.js.org/docs/faq/#how-do-i-skip-building-the-dll-immediately-after-install)
 6. 如果需要重新编译 native 模块，请修改 `.yarnrc`
 
