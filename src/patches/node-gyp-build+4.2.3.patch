@@ -12,10 +12,15 @@ index b5096ed..07724c1 100644
 +
  load.path = function (dir) {
    dir = path.resolve(dir || '.')
++  console.log('gyp call old ',dir)
 +  if (isPackaged) {
++    // for: D:\vagrant\www\kids_friends_electron\release\win-unpacked\src\node_modules\ref-napi
 +    dir = dir.replace('src','resources\\app.asar.unpacked')
++    // for dir like: D:\vagrant\www\kids_friends_electron\release\win-unpacked\resources\app.asar\node_modules\ref-napi
++    dir = dir.replace('resources\\app.asar\\','resources\\app.asar.unpacked\\')
 +  }
-+  console.log('gyp call ',dir)
++  console.log('gyp call new ',dir)
+
 
    try {
      var name = runtimeRequire(path.join(dir, 'package.json')).name.toUpperCase().replace(/-/g, '_')
